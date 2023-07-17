@@ -1,0 +1,155 @@
+#####################
+1)Run a Docker Hub Image
+docker run node
+
+2)Check Running container 
+docker ps -a // will list all the container running and stopped
+docker ps // will list only running container
+
+3) Run Container in interactive mode
+docker run -it node
+
+4) Create Image
+docker build .
+docker build -t imageName:version . // to name and tag a image
+
+
+5) Run Docker Image / create Container
+docker run imageID
+docker run -p 3000:80 imageID // with expose port
+docker run -p 3000:80 -d imageID // run docker in detached mode
+docker attach containerName// if you run the container in detached mode with the above command and later want to run in attached mode without restarting the container then use this command
+docker logs -f containerName// it will attache the run the docker in attach mode
+docker start containerName // it will restart the docker in detached mode
+docker start -a containerName // it will restart the docker image in attached mode 
+docker run -p 3000:80 --name customName imageId // it will name the container
+docker run -p 3000:80 -d -rm --name myContainer imageName:version
+docker run -p 3000:80 -d --rm --name feedbackContainer-app -v feedbackVolume:/app/feedback feedbackImage-node:latest // persistant volume
+-v "%cd%":/app  // to bind the local directory to docker directory
+1) docker run -d -p 3000:80 --rm --name feedbackContainer-app -v "%cd%":/app -v /app/node_modules -v feedbackVolume:/app/feedback feedbackImage-node:latest // persistant volume
+2) docker run -d -p 3000:80 --rm --name feedbackContainer-app -v "D:/nodejs-app-docker:/app" -v /app/node_modules -v feedbackVolume:/app/feedback feedbackImage-node:latest // persistant volume
+3) docker run -d -p 3000:80 --rm --name feedbackContainer-app -v "D:/nodejs-app-docker:/app:ro" -v /app/node_modules -v /app/test -v feedbackVolume:/app/feedback feedbackImage-node:latest // here we are restricting the docker to make the changes accidently in our local directory using (ro : read only flag) but we want to insert the file into feedback(permanent basis) and temp(temprary basis) direcotry. so we 
+// we will have to explicitly write a new command to override the read only setting for those directory. for feedback directory we have already done so using (-v feedbackVolume:/app/feedback) and for temp we will have to write (-v /app/temp)
+
+using these two commands if you will make changes in local code it will be refelcted on localhost:3000 after refreshing the page.
+to reflect the node code use below steps
+1) docker stop containerName
+2) docker start containerName
+or we can use nodemon it will reflect the changes
+1) Add the nodemon in package.json
+scripts : {
+    "start" : "nodemon server.js"
+}
+2) in Dockerfile
+    CMD ['npm', 'start']
+
+
+
+6) Stop Docker Container
+docker stop containerName
+
+7) Help
+docker --help
+docker ps --help
+docker logs --help
+docker volume --help
+
+8) logs
+docker logs containerName // it will also list you the errors if any
+
+9) Remove Container
+docker rm containerName1 containerName2 containername3 //remove containers
+docker container prune
+
+10) Remove images
+docker rmi imageID
+docker image prune // it will remove all the unused images
+docker image prune -a  // to delete all images incuding named ones
+
+
+11) List images
+docker images
+
+12) Remove the container automatically when you stop it use the below commands
+1) docker run -p 3000:80 -d --rm id
+2) docker stop containerID // these two commands will remove the container after stopping
+
+13) To Check the details of Image
+docker image inspect imageID 
+
+14) steps to deploy image on Docker Hub
+1) docker tag node-demo:latest atendrasingh1511/node-demo
+2) docker login
+3) docker push atendrasingh1511/node-demo
+4) docker logout
+5) docker pull atendrasingh1511/node-demo
+
+15) steps to fetch latest image from dockethub and run
+docker pull atendrasingh1511/node-demo // if you will not run this comand first then the old version of image in local system will run
+docker run atendrasingh1511/node-demo
+
+16) list volume
+docker volume ls
+docker volume inspect feedback // to get details about the created volume
+
+17) Volume types
+1) Annonymous voulume
+2) Named volume // persistent volume
+3) Bind Mounts // Bind mounts is use to bind the local directory to container directory it will help in if you make any chnages in code then you don't need to rebuild the new image.
+
+18) To use ENV variavles
+
+1) in docker file 
+ENV PORT 80
+
+at the time of container run we can provide the ENV variavles
+--env PORT=8000
+or
+-e PORT=8000 -e DB=mjuyfvfvyt
+or to use ENV variables from file use
+--env-file ./.env
+
+19) To use build arguments
+1) in docker file 
+ARG DEFAULT_PORT = 80
+
+2) and can be update on creating the image
+docker build -t feedback-node:dev --build-arg DEFAULT_PORT = 8000 .
+
+20) To Debug any error in Image and container 
+1) Run container in detached mode
+2) Check container running process (docker ps) if container is running or stopeed working
+
+21) Network - cross container comunnication
+1) To Run mongodb locally with docker without using mongodb container
+#replace localhost/127.0.0.1 with host.docker.internal
+# Internally it will be replace by your IP address so it will work like other http request 
+2) To Run mongodb in a container (cross container connection)
+# to create a mongodb container use (docker run -d --name mongodb mongo) here mongo is the container name on dockerhub and mongodb is the name we have given to this
+# steps 1:- Either you replace the localhost/127.0.01 with the IP (IP can be find here-:  docker container inspect mongodb)
+# step 2:- Step1 is not convenient beacuse you have to make image every time when the mongo db IP changes.
+# Step 3:- We will put all contianers in a network then this way the container can talk to each other
+## first create a network:-  docker network create favorites-net
+## docker run -d --name mongodb --network favorites-net mongo
+## if two containers are part of a network you can use the container name for comunnication
+## replace 120.0.0.1/localhost with mongodb
+## Now run the node container:-  docker run --name favorites --network favorites-net -d --rm  -p 3000:3000 favorites-node 
+3) To persisit the data in mongo db after container is stoped
+# docker run --name mongodb -v data:/data/db -rm -d -netowrk goals-net mongo
+4) add Authentication in mongo db
+# replace in connection string with (mongodb://max:secret@mongodb:27017/testDB?authSource=admin)
+# docker run --name mongodb -v data:/data/db -rm -d -netowrk goals-net -e MONGO_INITDB_ROOT_USERNAME=max -e MONGO_INITDB_ROOT_PASSWORD=sceret  mongo
+# For username and password create ENV in Dockerfile and in connection string, access using (process.env) 
+
+22) Docker Compose 
+1) docker-compose up // to start and run the containers
+2) docker-compose up -d // to start and run the containers in detached mode
+3) docker-compose down // to stop and delete all the running containers use this command but it will not delete volumes, to delete volumes use the below command
+4) docker-compose down -v //to delete the volumes
+5) docker-compose up --build / docker-compose up build #it will rebuild the images otherwise docker compose reuse the images 
+6) docker-compose build # it will only build the images and do not start the containers
+7) docker-compose run serviceName # can run singal service
+8) Learn docker compose commands on youtube
+9) docker-compose up service1 service2 service3
+
+
