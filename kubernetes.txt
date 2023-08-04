@@ -44,3 +44,8 @@ minikube service backend
 1) Change the replicas in deployment.yaml file then
 2) kubectl apply -f=deployment.yaml
 3) kubectl get pods // to confirm running pods
+
+######### delete resources
+1) kubectl delete -f=deployment.yaml
+2) kubectl delete -f=deployment.yaml,service.yaml // delete multiple resources
+3) kubectl delete -f=deployment.yaml -f=service.yaml // delete multiple resources with other way
