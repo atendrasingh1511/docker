@@ -1,0 +1,46 @@
+install minikube
+install kubectl
+minikube status
+minikube start --driver=virtualbox
+minikube start --driver=docker
+minikube start --driver=hyperv
+
+minikube dashboard
+kubectl create // for help commands
+kubectl create deployment first-app --image=atendrasingh1511/lms-first-image // create deployments
+kubectl get deployments 
+kubectl get pods // get created pods
+kubectl delete deployment first-app
+minikube dashboard
+kubectl expose deployment first-app --type=LoadBalancer --port=8080 // create services
+kubectl get services
+minikube service first-app
+
+############ Create Replica ##########
+1) kubectl scale deployment/first-app --replica=3 // A replica is simply an instance of POD/Container. 3 replicas means that the same Pod/container is running 3 times
+2) Now check kubectl get pods // you will see 3 pods are running
+
+###########  update image (update the new changes in project) ##########
+1) docker build -t atendrasingh1511/lms-first-image:2 .  // version is necessary to redownload the changes
+2) docker push atendrasingh1511/lms-first-image:2
+3) kubectl set image deployment/first-app kub-first-app=atendrasingh1511/lms-first-image:2
+4) kubectl rollout status deployment/first-app // to check the status
+5) kubectl rollout undeo deployment/first-app // this will rollout latest deployment
+6) kubectl rollout history deployment/first-app  // to check deployment history
+7) kubectl rollout history deployment/first-app --revision=3  // to check deployment history of a particular deployment in details
+8) kubectl rollout undeo deployment/first-app --to-revision=1 // this will rollout specific deployment
+
+
+######### delete the depoyment and services #########
+1) kubectl delete service first-app
+2) kubectl delete deployment first-app
+
+
+kubectl apply -f=deployment.yaml
+kubectl apply -f=service.yaml
+minikube service backend
+
+########## Scale up and Down OR any Image version changes #########
+1) Change the replicas in deployment.yaml file then
+2) kubectl apply -f=deployment.yaml
+3) kubectl get pods // to confirm running pods
