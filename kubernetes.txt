@@ -49,3 +49,7 @@ minikube service backend
 1) kubectl delete -f=deployment.yaml
 2) kubectl delete -f=deployment.yaml,service.yaml // delete multiple resources
 3) kubectl delete -f=deployment.yaml -f=service.yaml // delete multiple resources with other way
+
+
+#### 
+1) kubectl delete -l group=example // delete by label
