@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:14-alpine
 
 WORKDIR /app
 
@@ -8,10 +8,6 @@ RUN npm install
 
 COPY . .
 
-ARG DEFAULT_PORT=80 
+EXPOSE 3000
 
-ENV PORT=$DEFAULT_PORT
-
-EXPOSE $PORT
-
-CMD [ "npm", "start" ]
+CMD [ "node", "app.js" ]

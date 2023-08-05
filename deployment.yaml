@@ -1,32 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: second-app-deployment
-  labels:
-    group: example
-spec:
+  name: story-deployment
+spec: 
   replicas: 1
   selector:
     matchLabels:
-      app: second-app
-      tier: backend
-    # matchExpressions: 
-    #   - {key: app, operator: NotIn, values: [second-app, first-app]}
+      app: story
   template:
-    metadata: 
+    metadata:
       labels:
-        app: second-app
-        tier: backend
-    spec: 
+        app: story
+    spec:
       containers:
-        - name: second-node
-          image: academind/kub-first-app:2
-          imagePullPolicy: Always
-          livenessProbe: 
-            httpGet:
-              path: /
-              port: 8080
-            periodSeconds: 10
-            initialDelaySeconds: 5
-        # - name: ...
-        #   image: ...
+        - name: story
+          image: academind/kub-data-demo:1
+          volumeMounts:
+            - mountPath: /app/story
+              name: story-volume
+      volumes:
+        - name: story-volume
+          emptyDir: {}
