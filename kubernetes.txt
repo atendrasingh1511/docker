@@ -53,3 +53,6 @@ minikube service backend
 
 #### 
 1) kubectl delete -l group=example // delete by label
+
+kuectl get sc // get storage class
+kuectl get pvc // get storage class claim
