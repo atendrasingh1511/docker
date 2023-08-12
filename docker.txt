@@ -153,3 +153,16 @@ docker build -t feedback-node:dev --build-arg DEFAULT_PORT = 8000 .
 9) docker-compose up service1 service2 service3
 
 
+############################## New Commands ###########################
+docker ps --all
+docker create hello-world
+docker start -a containerid
+docker system prune (will remove all the unused things)
+docker stop containerId
+docker kill containerId
+docker exec -it containerID sh(if docker is already running and you want to enter in shell in diffrent cmd)
+docker run -it container sh
+
+#######################################################################
+
+

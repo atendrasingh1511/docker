@@ -1,0 +1,25 @@
+kubectl apply -f posts.yaml
+kubectl get pods
+kubectl exec -it pod_name [cmd]
+kubectl logs pod_name
+kubectl delete pod pod_name
+kubectl describe pod pod_name //print information about the running pod
+kubectl get deployments
+kubectl describe deployment deployments_name //print information about the deployments
+kubectl delete deployment deployment_name
+
+############ update deployments ##########
+1) deployment must be using the 'latest' tag in the pod spec section
+2) make an update to your code
+3) build the image
+4) push the image to docker hub
+5) Run the command  --- kubectl rollout restart deployment dep_name
+####################################################
+
+# service ia an object in k8s just like deployment
+# services provide networking between pods
+servics types: cluster IP, NodePort, Load balancer
+
+kubectl get services
+
+kubectl apply -f . // will deploy all the deployments files
